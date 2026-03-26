@@ -10,7 +10,7 @@
       "name": "ADVANCED WEB ARCHITECTURE",
       "time": "02:00pm - 04:00pm",
       "location": "Building 4, Lab 2B",
-      "instructor": "Katrin",
+      "instructor": "Prof. Lim",
       "days": [
         "Friday"
       ]
@@ -64,7 +64,7 @@
     { 
       "code": "CSCI-312", 
       "title": "Advanced Web Architecture", 
-      "lecturer": "Katrin", 
+      "lecturer": "Prof. Lim", 
       "credits": 4, 
       "fee": 1200.00,
       "theme": "bg-emerald-100 text-emerald-800 border-emerald-300" 
