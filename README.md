@@ -26,6 +26,7 @@ SIMConnect is a modern, interactive web application designed to help university 
 | **Notes Buddy** | Upload `.txt`, `.pdf`, `.docx`, or `.pptx` files and get an AI-generated summary |
 | **To-Do List** | Task manager with status cycling (Not Started → In Progress → Done) and due dates |
 | **AI Chatbot** | Persistent assistant accessible from the dashboard, renders markdown responses |
+| **Settings** | Edit profile name, student ID, email, and change password |
 
 ---
 
@@ -86,6 +87,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 5. **My Modules** — View all enrolled modules. Click the pencil icon to edit a module, or use the **+ Module** button to enroll in a new one.
 6. **Notes Buddy** — Upload a file (PDF, DOCX, PPTX, or TXT), get an AI summary, and save or download your note.
 7. **To-Do List** — Add tasks with optional due dates. Click the status badge to cycle through Not Started → In Progress → Done.
+8. **Settings** — Update your display name, student ID, email, or change your password via the Settings button in the sidebar.
 
 ---
 
