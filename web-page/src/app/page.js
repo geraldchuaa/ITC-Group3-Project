@@ -9,13 +9,31 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    if (username === "student" && password === "password123") {
-      router.push("/dashboard");
-    } else {
-      setError("Invalid username or password.");
+    setError("");
+
+    try {
+      const res =  await fetch ("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        router.push("/dashboard");
+      } else {
+        setError(data.error || "Invalid username or password.");
+      }
+    } catch (err) {
+      setError("Network error. Please try again later.");
     }
+  }
+
+  function handleGoToSignup() {
+    router.push("/signup");
   }
 
   return (
@@ -71,6 +89,14 @@ export default function LoginPage() {
           >
             Log In
           </button>
+        
+        <button
+          type="button"
+          className="w-full bg-gray-100 text-gray-700 font-bold text-sm uppercase py-2.5 rounded-lg hover:bg-gray-200 transition cursor-pointer"
+          onClick={handleGoToSignup}
+        >
+          Sign Up
+        </button>
         </form>
 
         <p className="mt-6 text-center text-xs text-gray-400">
