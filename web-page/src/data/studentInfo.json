@@ -1,7 +1,9 @@
 {
   "profile": {
     "name": "Chen Tu Dou",
-    "initial": "C"
+    "initial": "C",
+    "studentId": "S10234567A",
+    "email": "student@mymail.sim.edu.sg"
   },
   "schedule": [
     {
