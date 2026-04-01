@@ -39,9 +39,10 @@ export async function POST(request) {
             message: "Login successful",
             username: user.username,
             profile: user.profile || { name: user.username, initial: user.username[0] },
+            pfp: user.profile?.pfp || null,
             schedule: user.schedule || [],
             modules: user.modules || [],
-            pfp: user.profile?.pfp || null
+            todos: user.todos || []
         });
     } catch (error) {
         console.error("Login Error:", error);

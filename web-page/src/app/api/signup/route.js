@@ -35,7 +35,8 @@ export async function POST(request) {
             password ,
             profile: null, //set in signup-details
             schedule: [],
-            modules: []
+            modules: [],
+            todos: []
         });
 
         fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
