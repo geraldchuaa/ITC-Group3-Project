@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import studentData from "@/data/studentInfo.json";
 
@@ -32,6 +32,17 @@ const parseTimeForSorting = (timeString) => {
 export default function SchedulePage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedClass, setSelectedClass] = useState(null);
+    
+    // NEW: State to track which To-Do item was clicked for the popup
+    const [selectedTodo, setSelectedTodo] = useState(null);
+    const [todos, setTodos] = useState([]);
+
+    useEffect(() => {
+        fetch("/api/todos")
+            .then(res => res.json())
+            .then(data => setTodos(data))
+            .catch(err => console.error("Failed to load todos for schedule", err));
+    }, []);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -68,7 +79,6 @@ export default function SchedulePage() {
                         <p className="text-sm font-bold text-gray-600 mt-2 uppercase tracking-wider">Your academic calendar</p>
                     </div>
 
-                    {/* Month Navigation Controls */}
                     <div className="flex items-center space-x-4 bg-white border-2 border-gray-900 rounded-lg p-2 shadow-sm">
                         <button onClick={prevMonth} className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-md transition-colors cursor-pointer font-bold text-xl">
                             ←
@@ -85,7 +95,6 @@ export default function SchedulePage() {
                 {/* Calendar Container */}
                 <div className="bg-white border-2 border-gray-900 rounded-xl overflow-hidden shadow-sm">
                     
-                    {/* CHANGED: Text size increased from text-xs to text-sm */}
                     <div className="grid grid-cols-7 bg-simconnect-green text-white border-b-2 border-gray-900">
                         {DAYS_OF_WEEK.map(day => (
                             <div key={day} className="py-3 text-center text-sm font-bold uppercase tracking-wider border-r border-emerald-800 last:border-0">
@@ -117,30 +126,44 @@ export default function SchedulePage() {
                                 }))
                                 .sort((a, b) => parseTimeForSorting(a.displayTime) - parseTimeForSorting(b.displayTime));
 
+                            const todaysTodos = todos.filter(t => t.dueDate === currentDateStr);
+
                             return (
                                 <div key={day} className={`min-h-[150px] p-2.5 flex flex-col transition-colors ${isToday(day) ? "bg-emerald-50" : "bg-white"} hover:bg-gray-50`}>
                                     
                                     <div className="flex justify-between items-start mb-3">
-                                        {/* CHANGED: Date number size increased to text-base */}
                                         <span className={`w-8 h-8 flex items-center justify-center rounded-full text-base font-bold ${isToday(day) ? "bg-simconnect-green text-white shadow-md" : "text-gray-700"}`}>
                                             {day}
                                         </span>
                                     </div>
 
                                     <div className="space-y-2 overflow-y-auto flex-1 custom-scrollbar">
+                                        
                                         {todaysClasses.map(cls => (
                                             <button 
                                                 key={cls.id} 
                                                 onClick={() => setSelectedClass(cls)}
                                                 className={`w-full text-left p-2 border rounded-md cursor-pointer hover:opacity-80 transition-opacity ${getSubjectTheme(cls.code)}`}
                                             >
-                                                {/* CHANGED: Font sizes significantly bumped up! */}
                                                 <p className="text-xs font-extrabold truncate leading-tight">{cls.code}</p>
                                                 <p className="text-[11px] font-bold opacity-90 truncate mt-0.5">{cls.displayTime}</p>
                                             </button>
                                         ))}
-                                    </div>
 
+                                        {/* NEW: Changed div to a clickable button to open the To-Do Modal */}
+                                        {todaysTodos.map(todo => (
+                                            <button 
+                                                key={`todo-${todo.id}`} 
+                                                onClick={() => setSelectedTodo(todo)}
+                                                className={`w-full text-left p-2 border-2 border-dashed rounded-md cursor-pointer hover:opacity-80 transition-opacity ${todo.status === 'done' ? 'border-gray-300 bg-gray-50 opacity-60' : 'border-gray-900 bg-yellow-50'}`}
+                                            >
+                                                <p className={`text-xs font-extrabold truncate leading-tight ${todo.status === 'done' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                                                    {todo.status === 'done' ? '✅' : '📌'} {todo.title}
+                                                </p>
+                                            </button>
+                                        ))}
+
+                                    </div>
                                 </div>
                             );
                         })}
@@ -148,8 +171,7 @@ export default function SchedulePage() {
                 </div>
             </main>
 
-
-            {/* The Popup Modal */}
+            {/* The Class Popup Modal (Unchanged) */}
             {selectedClass && (
                 <div 
                     className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in-up"
@@ -210,6 +232,68 @@ export default function SchedulePage() {
                                 className="px-5 py-2.5 bg-simconnect-button border-2 border-gray-900 text-gray-900 text-sm font-bold uppercase rounded-lg hover:opacity-90 transition-colors cursor-pointer shadow-sm"
                             >
                                 Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* NEW: The To-Do Popup Modal */}
+            {selectedTodo && (
+                <div 
+                    className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in-up"
+                    onClick={() => setSelectedTodo(null)}
+                >
+                    <div 
+                        className="bg-white rounded-2xl shadow-2xl w-[400px] max-w-full overflow-hidden border-2 border-gray-900 transform transition-all"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Dynamic Header based on if the task is done or not */}
+                        <div className={`p-6 border-b-2 border-gray-900 ${selectedTodo.status === 'done' ? 'bg-gray-100 text-gray-600' : 'bg-yellow-100 text-yellow-900'}`}>
+                            <div className="flex justify-between items-start">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-2xl">{selectedTodo.status === 'done' ? '✅' : '📌'}</span>
+                                    <h2 className="text-2xl font-black tracking-tight uppercase">Task Details</h2>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedTodo(null)} 
+                                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/10 transition-colors cursor-pointer text-xl font-bold"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-6 space-y-5 bg-white">
+                            <div>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Task Description</p>
+                                {/* NEW: The whitespace-normal and break-words classes force the long text to wrap instead of cut off! */}
+                                <p className="font-extrabold text-gray-900 text-lg whitespace-normal break-words leading-tight">
+                                    {selectedTodo.title}
+                                </p>
+                            </div>
+
+                            <div className="flex space-x-8 pt-2">
+                                <div>
+                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Due Date</p>
+                                    <p className="font-bold text-gray-900">{selectedTodo.dueDate}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Status</p>
+                                    <p className="font-bold text-gray-900 capitalize">
+                                        {/* Quick trick to replace underscores with spaces (e.g., 'in_progress' to 'in progress') */}
+                                        {selectedTodo.status.replace('_', ' ')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-5 bg-gray-50 border-t-2 border-gray-900 flex justify-end">
+                            <button 
+                                onClick={() => setSelectedTodo(null)} 
+                                className="px-5 py-2.5 bg-simconnect-button border-2 border-gray-900 text-gray-900 text-sm font-bold uppercase rounded-lg hover:opacity-90 transition-colors cursor-pointer shadow-sm"
+                            >
+                                Close
                             </button>
                         </div>
                     </div>
