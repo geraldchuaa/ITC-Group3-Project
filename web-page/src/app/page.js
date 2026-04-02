@@ -27,7 +27,7 @@ export default function LoginPage() {
             <span className="text-2xl font-bold text-white">S</span>
           </div>
           <h1 className="text-2xl font-extrabold uppercase text-gray-900 tracking-wide">
-            SIMConnect
+            SIMSync
           </h1>
           <p className="text-sm text-gray-500 mt-1">Student Portal</p>
         </div>

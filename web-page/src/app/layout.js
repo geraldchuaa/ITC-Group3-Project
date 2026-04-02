@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 
 // Updated the metadata to match your app!
 export const metadata = {
-  title: "SIMConnect",
+  title: "SIMSync",
   description: "Your university student dashboard",
 };
 
