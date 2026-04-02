@@ -36,18 +36,9 @@ export default function ToDoList() {
     const [newDueDate, setNewDueDate] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showDateInput, setShowDateInput] = useState(false);
-    const [username, setUsername] = useState("");
 
     useEffect(() => {
-        const savedUser = localStorage.getItem("currentUser");
-        const parsed = savedUser ? JSON.parse(savedUser) : null;
-        if (!parsed?.username) {
-            console.error("No currentUser found in localStorage");
-            return;
-        }
-
-        setUsername(parsed.username);
-        fetch(`/api/todos?username=${encodeURIComponent(parsed.username)}`)
+        fetch("/api/todos")
             .then(res => res.json())
             .then(data => setTasks(data))
             .catch(err => console.error("Failed to load tasks", err));
@@ -61,7 +52,7 @@ export default function ToDoList() {
             const response = await fetch("/api/todos", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, action: "ADD", title: newTask, dueDate: newDueDate || null }),
+                body: JSON.stringify({ title: newTask, dueDate: newDueDate || null }),
             });
             if (response.ok) {
                 const added = await response.json();
@@ -84,9 +75,9 @@ export default function ToDoList() {
         setTasks(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
         try {
             await fetch("/api/todos", {
-                method: "POST",
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, action: "UPDATE", id, status: newStatus }),
+                body: JSON.stringify({ id, status: newStatus }),
             });
         } catch (error) {
             console.error("Error updating status:", error);
@@ -97,9 +88,9 @@ export default function ToDoList() {
         setTasks(prev => prev.filter(t => t.id !== id));
         try {
             await fetch("/api/todos", {
-                method: "POST",
+                method: "DELETE",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, action: "DELETE", id }),
+                body: JSON.stringify({ id }),
             });
         } catch (error) {
             console.error("Error deleting task:", error);
@@ -111,9 +102,9 @@ export default function ToDoList() {
         setTasks(prev => prev.filter(t => t.status !== "done"));
         await Promise.all(done.map(t =>
             fetch("/api/todos", {
-                method: "POST",
+                method: "DELETE",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, action: "DELETE", id: t.id }),
+                body: JSON.stringify({ id: t.id }),
             })
         ));
     };
