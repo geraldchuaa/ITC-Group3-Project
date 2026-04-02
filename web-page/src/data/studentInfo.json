@@ -86,7 +86,20 @@
         "theme": "bg-amber-100 text-amber-800 border-amber-300"
       }
     ],
-    "todos": []
+    "todos": [
+      {
+        "id": 1775144554029,
+        "title": "review math lecture",
+        "status": "not_started",
+        "dueDate": "2026-04-04"
+      },
+      {
+        "id": 1775145356259,
+        "title": "review math lecture",
+        "status": "not_started",
+        "dueDate": "2026-04-03"
+      }
+    ]
   },
   {
     "username": "lilo",
