@@ -1,4 +1,4 @@
-# SIMConnect — ITC Group 3 Project
+# SIMSync — ITC Group 3 Project
 
 > A student academic management portal built with Next.js and Tailwind CSS.
 
@@ -122,7 +122,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ---
 
 ## Presentation
-- Youtube Link :
+- Youtube Link : https://youtu.be/kejYg00-Jio
 - Slides : https://www.canva.com/design/DAHFOLXZpAg/TGUSiT4ab7PJwz9tnwhgSQ/edit
 
 
