@@ -113,12 +113,18 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Member | Contributions |
 |---|---|
-| | |
-| | |
-| | |
-| | |
+|Gerald|Spearheaded the core technical architecture and handled the majority of the codebase development|
+|Eileen|Assisted in feature implementation and managed the preparation of technical presentation materials|
+|Elizabeth|Managed the project narrative and delivered the final presentation|
+|Neha|Collaborated on the visual identity and user interface design to ensure a seamless user experience|
+|Albert|Focused on the wireframing and aesthetic consistency of the digital platform|
 
 ---
+
+## Presentation
+- Youtube Link :
+- Slides : https://www.canva.com/design/DAHFOLXZpAg/TGUSiT4ab7PJwz9tnwhgSQ/edit
+
 
 ## Tech Stack
 
