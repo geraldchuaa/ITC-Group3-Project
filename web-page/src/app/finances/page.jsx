@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import studentData from "@/data/studentInfo.json";
 
 const mandatoryFees = [
     { id: "fee-tech", item: "Technology & Lab Fee", amount: 250.00, status: "Unpaid" },
@@ -18,33 +19,9 @@ const allTransactions = [
 ];
 
 export default function FinancesPage() {
-    const [user, setUser] = useState(null);
     const [showAllTransactions, setShowAllTransactions] = useState(false);
 
-    useEffect(() => {
-        const savedUser = localStorage.getItem("currentUser");
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-    }, []);
-
-    if (!user) {
-        return (
-            <div className="flex min-h-screen bg-simconnect-bg">
-                <Sidebar />
-                <main className="flex-1 p-8 md:p-12 h-screen flex items-center justify-center">
-                    <p className="font-bold text-gray-500 animate-pulse text-lg">
-                        LOADING FINANCIAL RECORDS...
-                    </p>
-                </main>
-            </div>
-        );
-    }
-
-    const userModules = user.modules || [];
-    const name = user.profile?.name || "Student";
-
-    const dynamicTuitionFees = userModules.map(mod => ({
+    const dynamicTuitionFees = studentData.modules.map(mod => ({
         id: `tuition-${mod.code}`,
         item: `${mod.code} Tuition`,
         amount: mod.fee || 1200.00, 
@@ -63,7 +40,7 @@ export default function FinancesPage() {
         invoiceText += `             SIMConnect\n`;
         invoiceText += `=======================================\n\n`;
         invoiceText += `Date: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}\n`;
-        invoiceText += `Student: ${name || 'Student'}\n\n`;
+        invoiceText += `Student: ${studentData.profile?.name || 'Student'}\n\n`;
         invoiceText += `--- CURRENT SEMESTER CHARGES ---\n`;
         
         fullFeeBreakdown.forEach(fee => {
