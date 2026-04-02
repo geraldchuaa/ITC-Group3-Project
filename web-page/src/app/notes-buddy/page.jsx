@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
-import studentData from "@/data/studentInfo.json";
 import ReactMarkdown from "react-markdown";
 
 const initialNotes = [
@@ -10,17 +9,43 @@ const initialNotes = [
 ];
 
 export default function NotesBuddyPage() {
+    const [user, setUser] = useState(null);
     const [notes, setNotes] = useState(initialNotes);
     const [selectedModule, setSelectedModule] = useState("All");
     const [openDropdownId, setOpenDropdownId] = useState(null);
 
     const [isUploadView, setIsUploadView] = useState(false);
-    const [uploadModule, setUploadModule] = useState(studentData.modules[0]?.code || "");
+    const [uploadModule, setUploadModule] = useState("");
     const [uploadFile, setUploadFile] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [aiSummary, setAiSummary] = useState("");
 
-    const enrolledModules = studentData.modules;
+    useEffect(() => {
+        const savedUser = localStorage.getItem("currentUser");
+        if (savedUser) {
+            const parsedUser = JSON.parse(savedUser);
+            setUser(parsedUser);
+            
+            if (parsedUser.modules && parsedUser.modules.length > 0) {
+                setUploadModule(parsedUser.modules[0].code);
+            }
+        }
+    }, []);
+
+    if (!user) {
+        return (
+            <div className="flex min-h-screen bg-simconnect-bg">
+                <Sidebar />
+                <main className="flex-1 p-8 md:p-12 h-screen flex items-center justify-center">
+                    <p className="font-bold text-gray-500 animate-pulse text-lg">
+                        LOADING NOTES-BUDDY...
+                    </p>
+                </main>
+            </div>
+        );
+    }
+
+    const enrolledModules = user.modules || [];
     const filteredNotes = selectedModule === "All" ? notes : notes.filter(note => note.moduleCode === selectedModule);
 
     const toggleDropdown = (e, id) => {
@@ -245,14 +270,14 @@ export default function NotesBuddyPage() {
                         <div className="mb-10">
                             <h2 className="text-sm font-extrabold text-gray-900 uppercase mb-4 tracking-wider">Your Folders</h2>
                             <div className="flex space-x-4 overflow-x-auto pb-4 custom-scrollbar">
-                                <button onClick={() => setSelectedModule("All")} className={`flex-shrink-0 w-40 p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${selectedModule === "All" ? "bg-simconnect-green border-gray-900 text-white shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] scale-105" : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"}`}>
+                                <button onClick={() => setSelectedModule("All")} className={`shrink-0 w-40 p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${selectedModule === "All" ? "bg-simconnect-green border-gray-900 text-white shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] scale-105" : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"}`}>
                                     <div className="text-3xl mb-2">📁</div>
                                     <h3 className="font-extrabold text-sm uppercase">All Notes</h3>
                                     <p className={`text-xs mt-1 font-bold ${selectedModule === "All" ? "text-emerald-100" : "text-gray-500"}`}>{notes.length} Files</p>
                                 </button>
 
                                 {enrolledModules.map(mod => (
-                                    <button key={mod.code} onClick={() => setSelectedModule(mod.code)} className={`flex-shrink-0 w-48 p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${selectedModule === mod.code ? "bg-simconnect-green border-gray-900 text-white shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] scale-105" : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"}`}>
+                                    <button key={mod.code} onClick={() => setSelectedModule(mod.code)} className={`shrink-0 w-48 p-4 border-2 rounded-xl text-left transition-all cursor-pointer ${selectedModule === mod.code ? "bg-simconnect-green border-gray-900 text-white shadow-[4px_4px_0px_0px_rgba(17,24,39,1)] scale-105" : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"}`}>
                                         <div className="text-3xl mb-2">📂</div>
                                         <h3 className="font-extrabold text-sm uppercase truncate">{mod.code}</h3>
                                         <p className={`text-[10px] mt-1 font-bold uppercase truncate ${selectedModule === mod.code ? "text-emerald-100" : "text-gray-500"}`}>{mod.title}</p>
